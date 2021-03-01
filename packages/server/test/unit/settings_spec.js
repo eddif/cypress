@@ -9,6 +9,10 @@ const projectRoot = process.cwd()
 describe('lib/settings', () => {
   context('with no configFile option', () => {
     beforeEach(function () {
+      Object.keys(require.cache).forEach((key) => {
+        delete require.cache[key]
+      })
+
       this.setup = (obj = {}) => {
         return fs.writeJsonAsync('cypress.json', obj)
       }

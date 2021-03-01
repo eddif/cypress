@@ -140,10 +140,20 @@ module.exports = {
 
     const file = this.pathToConfigFile(projectRoot, options)
 
-    return fs.readJsonAsync(file)
-    .catch({ code: 'ENOENT' }, () => {
-      return this._write(file, {})
-    }).then((json = {}) => {
+    const requireAsync = (file) => {
+      try {
+        return Promise.resolve(require(file))
+      } catch (err) {
+        if (err.code === 'MODULE_NOT_FOUND') {
+          return this._write(file, {})
+        }
+
+        throw Error(err)
+      }
+    }
+
+    return requireAsync(file)
+    .then((json = {}) => {
       const changed = this._applyRewriteRules(json)
 
       // if our object is unchanged

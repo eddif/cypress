@@ -422,6 +422,10 @@ describe('lib/cypress', () => {
 
   context('--run-project', () => {
     beforeEach(() => {
+      Object.keys(require.cache).forEach((key) => {
+        delete require.cache[key]
+      })
+
       sinon.stub(electron.app, 'on').withArgs('ready').yieldsAsync()
       sinon.stub(runMode, 'waitForSocketConnection').resolves()
       sinon.stub(runMode, 'listenForProjectEnd').resolves({ stats: { failures: 0 } })
